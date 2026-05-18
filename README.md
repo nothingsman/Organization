@@ -170,4 +170,4 @@ The client automatically:
 
 ## License
 
-[Your License Here]
+MIT License
