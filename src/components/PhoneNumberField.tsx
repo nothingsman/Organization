@@ -1,6 +1,6 @@
 'use client';
 
-import PhoneInput from 'react-phone-number-input';
+import PhoneInput, { getCountryCallingCode } from 'react-phone-number-input';
 import type { Country } from 'react-phone-number-input';
 
 interface PhoneNumberFieldProps {
@@ -28,6 +28,13 @@ export function PhoneNumberField({
   autoComplete = 'tel',
   id,
 }: PhoneNumberFieldProps) {
+  const handleCountryChange = (country?: Country) => {
+    if (!country) return;
+    if (value) return;
+    const callingCode = getCountryCallingCode(country);
+    onChange(`+${callingCode}`);
+  };
+
   return (
     <>
       <input type="hidden" name={name} value={value} />
@@ -37,6 +44,7 @@ export function PhoneNumberField({
         placeholder={placeholder}
         value={value || undefined}
         onChange={(nextValue) => onChange(nextValue ?? '')}
+        onCountryChange={handleCountryChange}
         className={`phone-input-base ${className}`.trim()}
         countrySelectProps={{
           'aria-label': 'Select phone country',

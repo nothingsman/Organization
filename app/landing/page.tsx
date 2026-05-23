@@ -69,7 +69,7 @@ export default function LandingPage() {
                 Login
               </Link>
               <Link href="/onboarding" className="btn-primary text-sm">
-                Start Free Trial
+                Get Started
               </Link>
             </div>
 
@@ -104,7 +104,7 @@ export default function LandingPage() {
                 Login
               </Link>
               <Link href="/onboarding" className="btn-primary w-full text-center text-sm">
-                Start Free Trial
+                Get Started
               </Link>
             </div>
           </motion.div>
@@ -136,7 +136,7 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/onboarding" className="btn-primary group text-base md:text-lg">
-                  Start Free 30-Day Trial
+                  Get Started
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition" />
                 </Link>
                 <a
@@ -149,7 +149,7 @@ export default function LandingPage() {
               <div className="mt-8 flex items-center gap-6 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  No credit card required
+                  Guided onboarding
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-green-600" />
@@ -465,7 +465,7 @@ export default function LandingPage() {
                       : 'bg-primary-navy text-white hover:bg-primary-navy/90'
                   }`}
                 >
-                  Start Free Trial
+                  Get Started
                 </Link>
               </motion.div>
             ))}
@@ -555,7 +555,7 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/onboarding" className="btn-primary group text-base md:text-lg">
-                Start Your Free Trial
+                Get Started
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition" />
               </Link>
               <a
@@ -565,7 +565,7 @@ export default function LandingPage() {
                 View Pricing
               </a>
             </div>
-            <p className="text-sm text-gray-500 mt-6">No credit card required • 30-day free trial • Cancel anytime</p>
+            <p className="text-sm text-gray-500 mt-6">Flexible plans • Cancel anytime</p>
           </motion.div>
         </div>
       </section>

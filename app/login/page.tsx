@@ -67,8 +67,8 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-slate-900 to-slate-800 overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1554224311-beee415c201f?w=1200&h=1200&fit=crop&q=80"
-            alt="Education"
+            src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1200&h=1200&fit=crop&q=80"
+            alt="Classroom learning"
             fill
             priority
             sizes="50vw"

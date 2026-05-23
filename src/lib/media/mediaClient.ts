@@ -57,6 +57,37 @@ const DEFAULT_PART_SIZE = 8 * 1024 * 1024; // 8MB
 export function createMediaClient(options: MediaClientOptions = {}) {
   const baseUrl = options.baseUrl ?? "";
 
+  const formatMediaError = (status: number, statusText: string, text: string, path: string) => {
+    const fallback = "Media upload failed. Please try again.";
+    const isHtml = text.trim().startsWith("<!DOCTYPE html>") || text.includes("<html");
+
+    if (status === 404) {
+      return "Media upload service is unavailable. Please contact support.";
+    }
+
+    if (status === 413) {
+      return "File is too large. Please upload a smaller file.";
+    }
+
+    if (status === 415) {
+      return "Unsupported file type. Please upload a supported file.";
+    }
+
+    if (status >= 500) {
+      return "Media upload is temporarily unavailable. Please try again later.";
+    }
+
+    if (text && !isHtml) {
+      return text;
+    }
+
+    if (statusText) {
+      return `${fallback} (${status} ${statusText})`;
+    }
+
+    return fallback;
+  };
+
   async function apiFetch<T>(
     path: string,
     init: RequestInit = {}
@@ -92,9 +123,8 @@ export function createMediaClient(options: MediaClientOptions = {}) {
 
     if (!res.ok) {
       const text = await res.text().catch(() => "");
-      throw new Error(
-        `Media API failed: ${res.status} ${res.statusText}${text ? ` - ${text}` : ""}`
-      );
+      const message = formatMediaError(res.status, res.statusText, text, path);
+      throw new Error(message);
     }
 
     if (res.status === 204) {
