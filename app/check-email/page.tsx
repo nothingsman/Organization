@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Mail, ArrowRight, Building2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { authApi } from '@/lib/services/authApi';
 import { formatAuthError } from '@/lib/utils/errorMessages';
 
-export default function CheckEmailPage() {
+function CheckEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email');
@@ -131,5 +131,13 @@ export default function CheckEmailPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function CheckEmailPage() {
+  return (
+    <Suspense fallback={null}>
+      <CheckEmailContent />
+    </Suspense>
   );
 }
