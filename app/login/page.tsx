@@ -1,7 +1,7 @@
 'use client';
 
+import { Suspense, useState, type FormEvent, useEffect } from 'react';
 import Image from 'next/image';
-import { useState, type FormEvent, useEffect } from 'react';
 import { Mail, Lock, LogIn, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useAuth } from '@/context/AuthContext';
@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { LegalModal, TermsOfService, PrivacyPolicy } from '@/components/LegalModal';
 import { formatAuthError } from '@/lib/utils/errorMessages';
 
-export default function LoginPage() {
+function LoginForm() {
   const { directLogin, hydrated, isAuthenticated, onboardingComplete, completeOnboarding } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -232,5 +232,13 @@ export default function LoginPage() {
         <PrivacyPolicy />
       </LegalModal>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }
