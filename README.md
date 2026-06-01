@@ -1,4 +1,4 @@
-# Kelem.co - Parent-School Engagement Platform
+# Kelem - Parent-School Engagement Platform
 
 A modern Next.js application for managing school-parent communication and engagement.
 

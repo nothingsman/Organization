@@ -18,10 +18,51 @@ import {
   LogOut,
   User as UserIcon,
   Shield,
-  Plus
+  Plus,
+  X,
+  Type,
+  Contrast,
+  Moon,
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import type { Organization } from '@/lib/types/organizations';
+
+const STORAGE_KEY = "org-accessibility-settings"
+
+interface AccessibilitySettings {
+  fontSize: "small" | "normal" | "large"
+  highContrast: boolean
+  reducedMotion: boolean
+}
+
+const FONT_SIZE_VALUES: Record<AccessibilitySettings["fontSize"], string> = {
+  small: "14px",
+  normal: "16px",
+  large: "20px",
+}
+
+const defaultSettings: AccessibilitySettings = {
+  fontSize: "normal",
+  highContrast: false,
+  reducedMotion: false,
+}
+
+function loadSettings(): AccessibilitySettings {
+  if (typeof window === "undefined") return defaultSettings
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    return stored ? { ...defaultSettings, ...JSON.parse(stored) } : defaultSettings
+  } catch {
+    return defaultSettings
+  }
+}
+
+function applySettings(settings: AccessibilitySettings) {
+  const root = document.documentElement
+  root.style.fontSize = FONT_SIZE_VALUES[settings.fontSize]
+  root.classList.toggle("high-contrast", settings.highContrast)
+  root.classList.toggle("reduced-motion", settings.reducedMotion)
+}
 
 export default function Sidebar({ onNavClick, isMobile }: { onNavClick?: () => void; isMobile?: boolean }) {
   const router = useRouter();
@@ -30,7 +71,18 @@ export default function Sidebar({ onNavClick, isMobile }: { onNavClick?: () => v
   const { organizations, organization, setOrganization, loading } = useOrganizationContext();
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [accessibilitySettings, setAccessibilitySettings] = useState<AccessibilitySettings>(loadSettings);
+
+  const updateSetting = <K extends keyof AccessibilitySettings>(key: K, value: AccessibilitySettings[K]) => {
+    setAccessibilitySettings((prev) => {
+      const next = { ...prev, [key]: value }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+      applySettings(next)
+      return next
+    })
+  }
+
   // Get owner name from organization context
   const ownerName = organization?.client_full_name || organization?.name || 'Admin User';
   const handleOrganizationSelect = (selectedOrganization: Organization) => {
@@ -57,6 +109,7 @@ export default function Sidebar({ onNavClick, isMobile }: { onNavClick?: () => v
   ];
 
   return (
+    <>
     <aside className={cn(
       "w-full bg-[#F8FAFC] flex flex-col h-full overflow-y-auto",
       !isMobile && "border-r border-[#E2E8F0] fixed left-0 top-0 w-64 h-screen"
@@ -254,6 +307,17 @@ export default function Sidebar({ onNavClick, isMobile }: { onNavClick?: () => v
                   </Link>
                   <div className="h-[1px] bg-outline-variant/30 my-1 mx-2" />
                   <button
+                    onClick={() => {
+                      setIsProfileOpen(false);
+                      setIsSettingsOpen(true);
+                    }}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-primary-navy hover:bg-surface transition-colors"
+                  >
+                    <Settings className="w-4 h-4 text-primary-navy/40" />
+                    Accessibility
+                  </button>
+                  <div className="h-[1px] bg-outline-variant/30 my-1 mx-2" />
+                  <button
                     onClick={handleSignOut}
                     className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-bold text-rose-600 hover:bg-rose-50 transition-colors"
                   >
@@ -297,6 +361,149 @@ export default function Sidebar({ onNavClick, isMobile }: { onNavClick?: () => v
           )}
         </button>
       </div>
+
     </aside>
+
+      {/* Accessibility Settings Modal — rendered outside fixed sidebar for proper stacking */}
+      <AnimatePresence>
+        {isSettingsOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSettingsOpen(false)}
+              className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            >
+              <div className="w-full max-w-md bg-card rounded-2xl shadow-2xl border border-border overflow-hidden">
+                <div className="flex items-center justify-between px-6 py-5 border-b border-border">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-muted flex items-center justify-center">
+                      <Settings size={18} className="text-muted-foreground" />
+                    </div>
+                    <h2 className="text-lg font-bold text-card-foreground">Accessibility Settings</h2>
+                  </div>
+                  <button type="button" onClick={() => setIsSettingsOpen(false)}
+                    className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">
+                    <X size={18} />
+                  </button>
+                </div>
+
+                <div className="px-6 py-5 space-y-6">
+                  <SettingRow
+                    icon={<Type size={18} />}
+                    label="Font Size"
+                    description="Adjust text size across the dashboard"
+                  >
+                    <div className="flex gap-1.5">
+                      {(["small", "normal", "large"] as const).map((size) => (
+                        <button
+                          key={size}
+                          type="button"
+                          onClick={() => updateSetting("fontSize", size)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                            accessibilitySettings.fontSize === size
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted text-muted-foreground hover:bg-accent"
+                          }`}
+                        >
+                          {size === "small" ? "Small" : size === "normal" ? "Normal" : "Large"}
+                        </button>
+                      ))}
+                    </div>
+                  </SettingRow>
+
+                  <SettingRow
+                    icon={<Contrast size={18} />}
+                    label="High Contrast"
+                    description="Increase color contrast for better visibility"
+                  >
+                    <ToggleButton
+                      enabled={accessibilitySettings.highContrast}
+                      onToggle={() => updateSetting("highContrast", !accessibilitySettings.highContrast)}
+                    />
+                  </SettingRow>
+
+                  <SettingRow
+                    icon={<Moon size={18} />}
+                    label="Reduced Motion"
+                    description="Minimize animations and transitions"
+                  >
+                    <ToggleButton
+                      enabled={accessibilitySettings.reducedMotion}
+                      onToggle={() => updateSetting("reducedMotion", !accessibilitySettings.reducedMotion)}
+                    />
+                  </SettingRow>
+                </div>
+
+                <div className="px-6 py-4 bg-muted/50 border-t border-border">
+                  <p className="text-[10px] font-medium text-muted-foreground text-center">
+                    Settings are saved locally and persist across sessions.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
+}
+
+function SettingRow({
+  icon,
+  label,
+  description,
+  children,
+}: {
+  icon: React.ReactNode
+  label: string
+  description: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start gap-3 min-w-0">
+        <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground shrink-0 mt-0.5">
+          {icon}
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-bold text-card-foreground">{label}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
+        </div>
+      </div>
+      <div className="shrink-0">{children}</div>
+    </div>
+  )
+}
+
+function ToggleButton({
+  enabled,
+  onToggle,
+}: {
+  enabled: boolean
+  onToggle: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+        enabled ? "bg-primary" : "bg-border"
+      }`}
+    >
+      <span
+        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
+          enabled ? "translate-x-6" : "translate-x-1"
+        }`}
+      />
+    </button>
+  )
 }

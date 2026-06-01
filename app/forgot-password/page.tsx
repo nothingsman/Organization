@@ -1,28 +1,32 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { Mail, ArrowLeft, Building2, CheckCircle2 } from 'lucide-react';
+import { Mail, ArrowLeft, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authApi } from '@/lib/services/authApi';
 import { formatAuthError } from '@/lib/utils/errorMessages';
 
 export default function ForgotPasswordPage() {
-  const router = useRouter();
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [email, setEmail] = useState('');
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    
+
     const formData = new FormData(e.currentTarget);
-    const emailValue = String(formData.get('email') ?? '');
+    const emailValue = String(formData.get('email') ?? '').trim();
     setEmail(emailValue);
+
+    if (!emailValue) {
+      setError('Please enter your email address.');
+      setLoading(false);
+      return;
+    }
 
     try {
       await authApi.resetPassword({ email: emailValue });
@@ -34,150 +38,118 @@ export default function ForgotPasswordPage() {
     }
   };
 
-  if (success) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-bg-grey p-4">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-12">
-            <div className="inline-block p-5 bg-primary-navy/5 rounded-[--radius-school] mb-6">
-              <Building2 className="w-10 h-10 text-primary-navy" />
-            </div>
-            <h1 className="text-3xl font-black text-primary-navy mb-3 tracking-tight sm:text-4xl">
-              Check Your Email
-            </h1>
-            <p className="text-xs text-primary-navy/40 font-bold uppercase tracking-[0.3em] mb-4">
-              Institutional Portal
-            </p>
-          </div>
-
-          <motion.div
-            className="card-elevated"
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.1 }}
-          >
-            <div className="text-center py-8">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="w-10 h-10 text-green-600" />
-              </div>
-
-              <h2 className="text-2xl font-bold text-text-main mb-4">
-                Reset Link Sent!
-              </h2>
-
-              <p className="text-text-muted mb-2">
-                We&apos;ve sent a password reset link to:
-              </p>
-              <p className="text-primary-navy font-semibold mb-6">
-                {email}
-              </p>
-
-              <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-6 text-left">
-                <p className="text-sm text-blue-900 mb-2">
-                  <strong>Next steps:</strong>
-                </p>
-                <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                  <li>Check your email inbox</li>
-                  <li>Click the reset link in the email</li>
-                  <li>Enter your new password</li>
-                  <li>Login with your new password</li>
-                </ol>
-              </div>
-
-              <button
-                onClick={() => router.push('/login')}
-                className="btn-primary w-full"
-              >
-                Back to Login
-              </button>
-
-              <p className="text-xs text-text-muted mt-6">
-                Didn&apos;t receive the email? Check your spam folder.
-              </p>
-            </div>
-          </motion.div>
+  return (
+    <div className="min-h-screen flex flex-col lg:flex-row">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-primary to-[#283593] overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/60 to-transparent" />
+        <div className="relative z-10 flex flex-col justify-end p-12 text-primary-foreground">
+          <h2 className="text-3xl font-bold mb-4">Reset your password</h2>
+          <p className="max-w-md text-base text-blue-200 md:text-lg">
+            Enter the email associated with your account and we&apos;ll send you a
+            link to reset your password.
+          </p>
         </div>
       </div>
-    );
-  }
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-bg-grey p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-12">
-          <div className="inline-block p-5 bg-primary-navy/5 rounded-[--radius-school] mb-6">
-            <Building2 className="w-10 h-10 text-primary-navy" />
-          </div>
-          <h1 className="text-3xl font-black text-primary-navy mb-3 tracking-tight sm:text-4xl">
-            Forgot Password?
-          </h1>
-          <p className="text-xs text-primary-navy/40 font-bold uppercase tracking-[0.3em] mb-4">
-            Institutional Portal
-          </p>
-          <p className="text-base text-text-muted sm:text-lg">
-            Enter your email and we&apos;ll send you a reset link.
-          </p>
-        </div>
-
-        <motion.div
-          className="card-elevated"
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.1 }}
-        >
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-text-main flex items-center gap-2">
-                <Mail className="w-4 h-4 text-primary-navy" />
-                Email Address
-              </label>
-              <input
-                name="email"
-                type="email"
-                required
-                placeholder="admin@school.edu"
-                className="input-field"
-              />
-            </div>
-
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
-                <p className="text-sm text-red-800">{error}</p>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full"
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                'Send Reset Link'
-              )}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-8 lg:p-12 bg-card">
+        <div className="w-full max-w-md">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <Link
               href="/login"
-              className="text-sm text-primary-navy font-medium hover:underline inline-flex items-center gap-2"
+              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
             >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Login
+              <ArrowLeft size={16} />
+              Back to login
             </Link>
-          </div>
 
-          <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-            <p className="text-xs text-text-muted">
-              Remember your password?{' '}
-              <Link href="/login" className="text-primary-navy font-medium hover:underline">
-                Login here
-              </Link>
-            </p>
-          </div>
-        </motion.div>
+            {!success ? (
+              <>
+                <div className="mb-8">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-card-foreground mb-2">
+                    Forgot password?
+                  </h1>
+                  <p className="text-muted-foreground">
+                    No worries, we&apos;ll send you reset instructions.
+                  </p>
+                </div>
+
+                {error && (
+                  <div className="mb-6">
+                    <div className="bg-destructive/10 border border-destructive/20 rounded-xl px-4 py-3 flex items-start gap-3 shadow-sm">
+                      <AlertCircle size={18} className="text-destructive mt-0.5 shrink-0" />
+                      <p className="text-sm text-destructive-foreground flex-1">{error}</p>
+                    </div>
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label htmlFor="email" className="text-sm font-semibold text-card-foreground">
+                      Email
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        required
+                        autoComplete="email"
+                        placeholder="admin@school.edu"
+                        defaultValue={email}
+                        disabled={loading}
+                        className="w-full pl-10 pr-3 py-2.5 border border-border rounded-xl focus:outline-none focus:border-primary transition-all text-sm bg-muted focus:bg-card disabled:opacity-60 text-card-foreground"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-primary text-primary-foreground font-semibold hover:opacity-90 transition disabled:opacity-60"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 size={18} className="animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      'Send reset link'
+                    )}
+                  </button>
+                </form>
+              </>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center"
+              >
+                <div className="flex justify-center mb-6">
+                  <div className="h-14 w-14 rounded-full bg-emerald-100 flex items-center justify-center">
+                    <CheckCircle className="h-7 w-7 text-emerald-600" />
+                  </div>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-card-foreground mb-2">
+                  Check Your Email
+                </h1>
+                <p className="text-muted-foreground mb-2">
+                  We sent a password reset link to
+                </p>
+                <p className="text-sm font-semibold text-card-foreground mb-6">{email}</p>
+                <div className="text-sm text-muted-foreground space-y-2">
+                  <p>Check your inbox and click the reset link.</p>
+                  <p>You&apos;ll be asked to enter a new password.</p>
+                  <p>Then log in with your new password.</p>
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+        </div>
       </div>
     </div>
   );

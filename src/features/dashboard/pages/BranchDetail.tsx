@@ -22,9 +22,10 @@ import {
   ChevronRight,
   Home,
   Plus,
-  Trash2,
   UserPlus,
   School,
+  Copy,
+  ExternalLink,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
@@ -453,13 +454,7 @@ export default function BranchDetail() {
                                   >
                                     <Mail className="w-4 h-4" />
                                   </button>
-                                  <button 
-                                    onClick={() => handleRemoveAdmin(admin.id)}
-                                    className="p-2 text-rose-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all active:scale-95"
-                                    title="Remove admin"
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </button>
+
                                 </div>
                               </div>
                             </div>
@@ -480,11 +475,27 @@ export default function BranchDetail() {
                       <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
                       <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-60 mb-4">Quick Actions</h3>
                       <div className="space-y-3">
-                        <button className="w-full bg-white/10 hover:bg-white/20 transition-colors py-3.5 px-4 rounded-lg text-sm font-bold flex items-center justify-center gap-3 active:scale-95">
-                          Generate Report
+                        <button
+                          onClick={() => {
+                            if (selectedBranch) {
+                              navigator.clipboard.writeText(`${selectedBranch.name} (${selectedBranch.id})`);
+                            }
+                          }}
+                          className="w-full bg-white/10 hover:bg-white/20 transition-colors py-3.5 px-4 rounded-lg text-sm font-bold flex items-center justify-center gap-3 active:scale-95"
+                        >
+                          <Copy className="w-4 h-4" />
+                          Copy Branch ID
                         </button>
-                        <button className="w-full bg-white/10 hover:bg-white/20 transition-colors py-3.5 px-4 rounded-lg text-sm font-bold flex items-center justify-center gap-3 active:scale-95">
-                          Manage Staff Access
+                        <button
+                          onClick={() => {
+                            if (selectedBranch?.contactEmail) {
+                              window.location.href = `mailto:${selectedBranch.contactEmail}`;
+                            }
+                          }}
+                          className="w-full bg-white/10 hover:bg-white/20 transition-colors py-3.5 px-4 rounded-lg text-sm font-bold flex items-center justify-center gap-3 active:scale-95"
+                        >
+                          <Mail className="w-4 h-4" />
+                          Email Branch
                         </button>
                         <button
                           onClick={openEditBranchModal}

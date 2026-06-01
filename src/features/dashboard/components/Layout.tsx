@@ -8,15 +8,13 @@ interface LayoutProps {
   title: string;
   onAction?: () => void;
   actionLabel?: string;
-  showSearch?: boolean;
 }
 
 export default function Layout({ 
   children, 
   title, 
   onAction, 
-  actionLabel, 
-  showSearch = true 
+  actionLabel,
 }: LayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -57,7 +55,6 @@ export default function Layout({
           title={title}
           onAction={onAction}
           actionLabel={actionLabel}
-          showSearch={showSearch}
           onMenuClick={() => setIsMobileMenuOpen(true)}
         />
         <div className="flex-1">
