@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 const features = [
   {
     title: "Local Language Support",
-    description: "Communication in Amharic. Every parent can engage in their preferred language, ensuring no one is left behind.",
+    description: "Multilingual communication in Amharic, Afaan Oromo, Tigrinya, and English, enabling every parent to engage in their preferred language.",
   },
   {
     title: "Real-time Engagement",
