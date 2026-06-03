@@ -182,7 +182,7 @@ export function HeroSection() {
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
-            <span className="block whitespace-nowrap max-sm:whitespace-normal">Schools that</span>
+            <span className="block whitespace-nowrap max-sm:whitespace-normal">Schools where</span>
             <span className="block whitespace-nowrap max-sm:whitespace-normal">
               parents{" "}
               <span className="relative inline-block">
