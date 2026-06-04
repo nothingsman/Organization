@@ -41,13 +41,14 @@ export default function Analytics() {
       return;
     }
 
+    const organizationId = organization.id;
     let cancelled = false;
 
     async function fetchAnalytics() {
       try {
         setLoading(true);
         setError(null);
-        const response = await analyticsApi.getOrganizationAnalytics(organization.id);
+        const response = await analyticsApi.getOrganizationAnalytics(organizationId);
 
         if (!cancelled) {
           setAnalytics(response);
