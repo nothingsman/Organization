@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import { ArrowRight, Check, Zap } from "lucide-react";
 
 const plans = [
@@ -181,16 +182,26 @@ export function PricingSection() {
                   </ul>
 
                   {/* CTA */}
-                  <button
-                    className={`w-full py-4 flex items-center justify-center gap-2 text-sm font-semibold transition-all group rounded-lg ${
-                      plan.highlight
-                        ? "bg-blue-600 text-white hover:bg-blue-700"
-                        : "border border-slate-300 text-slate-900 hover:border-slate-400 hover:bg-slate-50"
-                    }`}
-                  >
-                    {plan.cta}
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                  </button>
+                  {plan.cta === "Contact sales" ? (
+                    <button
+                      className="w-full py-4 flex items-center justify-center gap-2 text-sm font-semibold transition-all group rounded-lg border border-slate-300 text-slate-900 hover:border-slate-400 hover:bg-slate-50"
+                    >
+                      {plan.cta}
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </button>
+                  ) : (
+                    <Link
+                      href="/onboarding"
+                      className={`w-full py-4 flex items-center justify-center gap-2 text-sm font-semibold transition-all group rounded-lg ${
+                        plan.highlight
+                          ? "bg-blue-600 text-white hover:bg-blue-700"
+                          : "border border-slate-300 text-slate-900 hover:border-slate-400 hover:bg-slate-50"
+                      }`}
+                    >
+                      {plan.cta}
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  )}
                 </div>
               </div>
             ))}
