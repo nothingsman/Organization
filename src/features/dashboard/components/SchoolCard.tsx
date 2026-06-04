@@ -10,6 +10,7 @@ import { getSchoolAvatarUrl } from '@/lib/utils/schoolAvatar';
 interface SchoolCardProps {
   school: School;
   branchCount?: number;
+  adminCount?: number;
   onEdit?: (school: School) => void;
 }
 
@@ -29,7 +30,7 @@ function SchoolCardImage({ src, alt, fallbackSrc }: { src: string; alt: string; 
   );
 }
 
-export default function SchoolCard({ school, branchCount = 0, onEdit }: SchoolCardProps) {
+export default function SchoolCard({ school, branchCount = 0, adminCount, onEdit }: SchoolCardProps) {
   const fallbackLogo = getSchoolAvatarUrl(school.name);
 
   return (
@@ -86,7 +87,7 @@ export default function SchoolCard({ school, branchCount = 0, onEdit }: SchoolCa
                 <span className="text-[10px] font-bold uppercase tracking-widest text-primary-navy/40">Admins</span>
                 <div className="flex items-center gap-2 mt-1">
                   <Users className="w-4 h-4 text-primary-navy" />
-                  <span className="font-bold text-sm tracking-tight">{school.staffCount.toLocaleString()}</span>
+                  <span className="font-bold text-sm tracking-tight">{(adminCount ?? school.staffCount).toLocaleString()}</span>
                 </div>
               </div>
             </div>

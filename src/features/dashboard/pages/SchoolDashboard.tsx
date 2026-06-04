@@ -12,6 +12,7 @@ import { motion } from 'motion/react';
 import { deleteQueuedMedia } from '@/lib/media/deleteQueuedMedia';
 import { organizationsApi } from '@/lib/services/organizationsApi';
 import { branchesApi } from '@/lib/services/branchesApi';
+import { branchAdminsApi } from '@/lib/services/branchAdminsApi';
 import { normalizeCountryName, normalizeOptionalPhoneNumber } from '@/lib/utils/contactValidation';
 import type { Organization } from '@/lib/types/organizations';
 import type { CreateSchoolRequest, UpdateSchoolRequest } from '@/lib/types/schools';
@@ -23,6 +24,7 @@ export default function SchoolDashboard() {
   const { schools, addSchool, updateSchool, loading: schoolsLoading, error: schoolsError } = useSchools();
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [branchCounts, setBranchCounts] = useState<Record<string, number>>({});
+  const [adminCounts, setAdminCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -102,30 +104,47 @@ export default function SchoolDashboard() {
     fetchOrganizations();
   }, []);
 
-  // Fetch branch counts for each school
+  // Fetch branch and admin counts for each school.
   useEffect(() => {
-    const fetchBranchCounts = async () => {
+    const fetchCounts = async () => {
       if (schools.length === 0) {
+        setBranchCounts({});
+        setAdminCounts({});
         return;
       }
 
       try {
-        const response = await branchesApi.list();
-        const counts: Record<string, number> = {};
-        
-        // Count branches per school
-        response.results.forEach(branch => {
-          counts[branch.school] = (counts[branch.school] || 0) + 1;
+        const [branchesResponse, branchAdmins] = await Promise.all([
+          branchesApi.list(),
+          branchAdminsApi.list(),
+        ]);
+        const nextBranchCounts: Record<string, number> = {};
+        const nextAdminCounts: Record<string, number> = {};
+        const branchToSchoolMap: Record<string, string> = {};
+
+        branchesResponse.results.forEach((branch) => {
+          nextBranchCounts[branch.school] = (nextBranchCounts[branch.school] || 0) + 1;
+          branchToSchoolMap[branch.id] = branch.school;
         });
-        
-        setBranchCounts(counts);
+
+        branchAdmins.forEach((admin) => {
+          const schoolId = branchToSchoolMap[admin.branch];
+          if (!schoolId) {
+            return;
+          }
+
+          nextAdminCounts[schoolId] = (nextAdminCounts[schoolId] || 0) + 1;
+        });
+
+        setBranchCounts(nextBranchCounts);
+        setAdminCounts(nextAdminCounts);
       } catch (err) {
-        console.error('Failed to fetch branch counts:', err);
-        // Silently fail - branch counts are not critical
+        console.error('Failed to fetch school counts:', err);
+        // Silently fail - counts are helpful but should not block the page.
       }
     };
 
-    fetchBranchCounts();
+    void fetchCounts();
   }, [schools]);
 
   const handleSchoolSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -268,6 +287,7 @@ export default function SchoolDashboard() {
                 <SchoolCard 
                   school={school} 
                   branchCount={branchCounts[school.id] || 0}
+                  adminCount={adminCounts[school.id] || 0}
                   onEdit={openEditModal}
                 />
               </motion.div>

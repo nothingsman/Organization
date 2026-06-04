@@ -1,26 +1,18 @@
-export interface AnalyticsQueryParams {
-  startDate?: string;
-  endDate?: string;
-  granularity?: 'day' | 'week' | 'month';
-}
-
-export interface AnalyticsDataPoint {
-  name: string;
+export interface OrganizationAnalyticsTotals {
   students: number;
-  revenue: number;
+  branch_admins: number;
+  teachers: number;
+  parents: number;
 }
 
-export interface AnalyticsSummary {
-  totalStudents: number;
-  totalStaff: number;
-  activeSessions: number;
-  monthlyRevenue: number;
-  studentsTrend: number;
-  staffTrend: number;
-  revenueTrend: number;
+export interface OrganizationAnalyticsYearPoint {
+  year: number;
+  count: number;
 }
 
-export interface AnalyticsResponse {
-  dataPoints: AnalyticsDataPoint[];
-  summary: AnalyticsSummary;
+export interface OrganizationAnalyticsResponse {
+  organization_id: string;
+  totals: OrganizationAnalyticsTotals;
+  student_enrollment_growth: OrganizationAnalyticsYearPoint[];
+  parent_engagement: OrganizationAnalyticsYearPoint[];
 }

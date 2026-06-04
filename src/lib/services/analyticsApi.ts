@@ -1,12 +1,11 @@
 import { apiRequest } from '../api/client';
-import type { AnalyticsResponse, AnalyticsQueryParams } from '../types/analytics';
+import type { OrganizationAnalyticsResponse } from '../types/analytics';
 
 export const analyticsApi = {
-  async get(params?: AnalyticsQueryParams): Promise<AnalyticsResponse> {
-    const res = await apiRequest<AnalyticsResponse>({
+  async getOrganizationAnalytics(organizationId: string): Promise<OrganizationAnalyticsResponse> {
+    const res = await apiRequest<OrganizationAnalyticsResponse>({
       method: 'GET',
-      path: '/analytics',
-      params: params as Record<string, string>,
+      path: `/api/organizations/${organizationId}/analytics/`,
     });
     return res.data;
   },
