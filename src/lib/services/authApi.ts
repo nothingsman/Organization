@@ -87,6 +87,16 @@ export const authApi = {
     });
   },
 
+  async organizationApprovalExchange(data: ActivationRequest): Promise<JWTResponse> {
+    const res = await apiRequest<JWTResponse>({
+      method: 'POST',
+      path: '/auth/organization-approval/exchange/',
+      body: data,
+      skipAuth: true,
+    });
+    return res.data;
+  },
+
   async getCurrentUser(): Promise<ApiUser> {
     const res = await apiRequest<ApiUser>({
       method: 'GET',

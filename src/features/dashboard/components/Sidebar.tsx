@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -192,19 +191,7 @@ export default function Sidebar({ onNavClick, isMobile }: { onNavClick?: () => v
                   ))}
                 </div>
 
-                <div className="px-2 pt-2 border-t border-outline-variant/30 mt-1">
-                  <button
-                    onClick={() => {
-                      setIsOpen(false);
-                      router.push('/');
-                      onNavClick?.();
-                    }}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-primary-navy hover:bg-surface transition-colors"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Add New Organization
-                  </button>
-                </div>
+
               </div>
             )}
           </>
@@ -265,15 +252,8 @@ export default function Sidebar({ onNavClick, isMobile }: { onNavClick?: () => v
               >
                 <div className="p-4 border-b border-outline-variant/30 bg-surface">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm ring-1 ring-outline-variant/50">
-                      <Image
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&q=80"
-                        alt="Admin Profile"
-                        width={48}
-                        height={48}
-                        sizes="48px"
-                        className="h-full w-full object-cover"
-                      />
+                    <div className="w-12 h-12 rounded-full bg-primary-navy/10 flex items-center justify-center font-bold text-primary-navy shrink-0 ring-2 ring-white shadow-sm">
+                      {ownerName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'AU'}
                     </div>
                     <div className="flex flex-col min-w-0">
                       <span className="text-sm font-bold text-primary-navy truncate">{ownerName}</span>
@@ -337,15 +317,8 @@ export default function Sidebar({ onNavClick, isMobile }: { onNavClick?: () => v
             isProfileOpen ? "bg-surface shadow-inner" : "hover:bg-surface"
           )}
         >
-          <div className="w-10 h-10 rounded-full overflow-hidden border border-outline-variant shadow-sm shrink-0 group-hover:scale-105 transition-transform">
-            <Image
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&q=80"
-              alt="Org Owner"
-              width={40}
-              height={40}
-              sizes="40px"
-              className="h-full w-full object-cover"
-            />
+          <div className="w-10 h-10 rounded-full bg-primary-navy/10 flex items-center justify-center font-bold text-primary-navy shrink-0 border border-outline-variant group-hover:scale-105 transition-transform">
+            {ownerName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'AU'}
           </div>
           {!isMobile && (
             <div className="flex flex-col min-w-0 text-left">
