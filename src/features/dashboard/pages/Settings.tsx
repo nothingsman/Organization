@@ -5,7 +5,7 @@ import Drawer from '../components/Drawer';
 import { MediaUploader } from '@/components/MediaUploader';
 import type { MediaUploaderState } from '@/components/MediaUploader';
 import { PhoneNumberField } from '@/components/PhoneNumberField';
-import { Shield, Bell, Mail, MessageSquare, Phone, ChevronRight, Building2, FileText, Lock } from 'lucide-react';
+import { Shield, Bell, Mail, MessageSquare, Phone, ChevronRight, Building2, FileText } from 'lucide-react';
 import { deleteQueuedMedia } from '@/lib/media/deleteQueuedMedia';
 import { useOrganization } from '@/lib/hooks/useOrganization';
 import { normalizeRequiredPhoneNumber } from '@/lib/utils/contactValidation';
@@ -248,23 +248,6 @@ export default function Settings() {
             </div>
           </div>
 
-          <div className="bg-rose-50 border border-rose-100 rounded-xl p-6 lg:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex gap-4 w-full md:w-auto">
-              <div className="p-3 bg-white rounded-lg shrink-0">
-                <Lock className="w-6 h-6 text-rose-600" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-rose-900">Danger Zone</h4>
-                <p className="text-xs text-rose-700/60 font-medium mt-0.5 line-clamp-2">Permanent actions related to your organization data</p>
-              </div>
-            </div>
-            <button 
-              onClick={() => setIsDeleteModalOpen(true)}
-              className="w-full md:w-auto bg-rose-600 text-white px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-rose-700 transition-colors shadow-lg shadow-rose-200 active:scale-95"
-            >
-              Offboard Organization
-            </button>
-          </div>
         </div>
       </div>
 
